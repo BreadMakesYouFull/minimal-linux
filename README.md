@@ -7,12 +7,14 @@ or extended to switch root to a full user space.
 
 Created while learning a bit more about typical linux startup process.
 
+As usual with shell scripts, read first and use at your own risk!
+
 ![boot from qemu](preview/qemu_small.png) ![boot on metal](preview/isoboot_small.jpeg)
 
 ## Prerequisites 
 
-* Debian based linux distro... or run in a debian container :)
-* Packages listed in ``minimal_linux.sh``
+* Debian (like) linux distro...
+* ...or use the container script :)
 * Missing package dependencies will be logged.
 * No root permissions should be needed after requirements are installed.
 * qemu if you want to run the result easily
@@ -37,7 +39,6 @@ sudo apt-get install -y
     xz-utils;
 ``` 
 
-
 ## Usage
 
 Create a minimal linux system:
@@ -57,6 +58,22 @@ qemu-system-x86_64 -kernel ./build/iso/boot/bzImage -initrd ./build/iso/boot/ini
 # To run iso directly in current terminal:
 qemu-system-x86_64 -drive format=raw,file=build/minimal_linux.iso -m 512 -nographic -vga std
 
+```
+
+Alternatively build with docker / podman:
+
+```
+# Docker
+docker build -t minimal-linux .
+docker run -d --name minimal-linux minimal-linux bash -c 'while true; do sleep 100; done'
+docker cp minimal-linux:/out/build/minimal_linux.iso .
+docker rm -f minimal-linux
+
+# Podman
+podman build -t minimal-linux .
+podman run -d --name minimal-linux minimal-linux bash -c 'while true; do sleep 100; done'
+podman cp minimal-linux:/out/build/minimal_linux.iso .
+podman rm -f minimal-linux
 ```
 
 ## Boot sequence
